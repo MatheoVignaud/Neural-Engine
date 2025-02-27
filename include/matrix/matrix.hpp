@@ -11,6 +11,8 @@ public:
 
     uint32_t get_rows();
     uint32_t get_cols();
+    void add_row(std::vector<float> row);
+    void add_col(std::vector<float> col);
     float get(uint32_t col, uint32_t row);
     void set(uint32_t col, uint32_t row, float val);
     void set_data(std::vector<float> data);

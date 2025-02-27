@@ -27,6 +27,32 @@ uint32_t Matrix::get_cols()
     return this->cols;
 }
 
+void Matrix::add_row(std::vector<float> row)
+{
+    if (row.size() != this->cols)
+    {
+        throw std::invalid_argument("Row size does not match matrix dimensions");
+    }
+    for (uint32_t i = 0; i < this->cols; i++)
+    {
+        this->data.push_back(row[i]);
+    }
+    this->rows++;
+}
+
+void Matrix::add_col(std::vector<float> col)
+{
+    if (col.size() != this->rows)
+    {
+        throw std::invalid_argument("Column size does not match matrix dimensions");
+    }
+    for (uint32_t i = 0; i < this->rows; i++)
+    {
+        this->data.insert(this->data.begin() + i * this->cols, col[i]);
+    }
+    this->cols++;
+}
+
 float Matrix::get(uint32_t col, uint32_t row)
 {
     return this->data[row * this->cols + col];

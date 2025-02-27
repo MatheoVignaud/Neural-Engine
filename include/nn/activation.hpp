@@ -4,9 +4,10 @@
 
 enum ActivationFunction
 {
+    LINEAR,
     RELU,
     SIGMOID,
-    TANH,
+    TANH
 };
 
 inline void relu(float &x)

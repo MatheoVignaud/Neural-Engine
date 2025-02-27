@@ -2,13 +2,14 @@
 
 #include <iostream>
 #include <nn/layer.hpp>
-#include <stdexcept>
 #include <random>
+#include <stdexcept>
 
 class NeuralNetwork
 {
 public:
-    NeuralNetwork(uint32_t input_size, ActivationFunction input_activation, uint32_t output_size, ActivationFunction output_activation);
+    NeuralNetwork();
+    NeuralNetwork(uint32_t input_size, uint32_t output_size, ActivationFunction output_activation);
     ~NeuralNetwork();
 
     void add_hidden_layer(uint32_t size, ActivationFunction activation);
@@ -26,6 +27,8 @@ public:
     uint32_t get_number_of_trainable_parameters();
 
     std::vector<float> forward(std::vector<float> input);
+
+    NeuralNetwork clone();
 
 private:
     Layer input_layer;

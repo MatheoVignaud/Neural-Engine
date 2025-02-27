@@ -5,8 +5,11 @@ set_languages("c++17")
 
 add_defines("THREDED_MATRIX_OPS")
 
+add_requires("libsdl2")
+
 
 target("Neural Engine")
     set_kind("binary")
+    add_packages("libsdl2")
     add_includedirs("include")
     add_files("src/*.cpp")
