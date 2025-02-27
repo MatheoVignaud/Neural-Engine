@@ -116,7 +116,6 @@ inline Matrix multiply(Matrix &a, Matrix &b)
             }
             else
             {
-                printf("i: %d, b.get_rows(): %d\n", i, b.get_rows());
                 threads.push_back(std::thread(multiplyThread, std::ref(a), std::ref(b), std::ref(result), i, b.get_rows()));
             }
         }

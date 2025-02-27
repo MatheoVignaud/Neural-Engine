@@ -55,6 +55,56 @@ bool NeuralNetwork::validate()
     return true;
 }
 
+bool NeuralNetwork::validate(float moyenne, float ecart_type)
+{
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::normal_distribution<double> distribution(moyenne, ecart_type); // normal distribution
+
+    if (this->hidden_layers.size() == 0)
+    {
+        this->valid = true;
+        return false;
+    }
+    // create Matrix for weights
+    this->input_layer.weights = Matrix(this->hidden_layers[0].biases.get_rows(), this->input_layer.biases.get_cols(), 1);
+    for (int i = 0; i < this->input_layer.weights.get_rows(); i++)
+    {
+        for (int j = 0; j < this->input_layer.weights.get_cols(); j++)
+        {
+            this->input_layer.weights.set(j, i, distribution(gen));
+        }
+    }
+    for (int i = 0; i < this->input_layer.biases.get_rows(); i++)
+    {
+        this->input_layer.biases.set(i, 0, distribution(gen));
+    }
+    for (uint32_t i = 0; i < this->hidden_layers.size(); i++)
+    {
+        if (i == this->hidden_layers.size() - 1)
+        {
+            this->hidden_layers[i].weights = Matrix(this->output_layer.biases.get_rows(), this->hidden_layers[i].biases.get_cols(), 1);
+        }
+        else
+        {
+            this->hidden_layers[i].weights = Matrix(this->hidden_layers[i + 1].biases.get_rows(), this->hidden_layers[i].biases.get_cols(), 1);
+        }
+        for (int j = 0; j < this->hidden_layers[i].weights.get_rows(); j++)
+        {
+            for (int k = 0; k < this->hidden_layers[i].weights.get_cols(); k++)
+            {
+                this->hidden_layers[i].weights.set(k, j, distribution(gen));
+            }
+        }
+        for (int j = 0; j < this->hidden_layers[i].biases.get_rows(); j++)
+        {
+            this->hidden_layers[i].biases.set(j, 0, distribution(gen));
+        }
+    }
+    this->valid = true;
+    return true;
+}
+
 uint32_t NeuralNetwork::get_number_of_trainable_parameters()
 {
     if (!this->valid)

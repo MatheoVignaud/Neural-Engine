@@ -3,6 +3,7 @@
 #include <iostream>
 #include <nn/layer.hpp>
 #include <stdexcept>
+#include <random>
 
 class NeuralNetwork
 {
@@ -12,6 +13,7 @@ public:
 
     void add_hidden_layer(uint32_t size, ActivationFunction activation);
     bool validate();
+    bool validate(float moyenne, float ecart_type);
 
     uint32_t get_input_size() { return this->input_layer.biases.get_cols(); }
     uint32_t get_output_size() { return this->output_layer.biases.get_cols(); }

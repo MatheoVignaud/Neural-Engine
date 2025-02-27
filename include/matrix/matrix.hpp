@@ -26,4 +26,9 @@ private:
     uint32_t rows;
     uint32_t cols;
     std::vector<float> data;
+
+    friend Matrix add(Matrix &a, Matrix &b);
+    friend Matrix subtract(Matrix &a, Matrix &b);
+    friend Matrix multiply(Matrix &a, Matrix &b);
+    friend Matrix transpose(Matrix &a);
 };
