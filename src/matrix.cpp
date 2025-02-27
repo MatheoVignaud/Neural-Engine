@@ -34,6 +34,10 @@ float Matrix::get(uint32_t col, uint32_t row)
 
 void Matrix::set(uint32_t col, uint32_t row, float val)
 {
+    if (col >= this->cols || row >= this->rows)
+    {
+        throw std::invalid_argument("Index out of bounds");
+    }
     this->data[row * this->cols + col] = val;
 }
 

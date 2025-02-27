@@ -14,6 +14,8 @@ public:
     void add_hidden_layer(uint32_t size, ActivationFunction activation);
     bool validate();
     bool validate(float moyenne, float ecart_type);
+    bool mutate(float mutation_rate, float mutation_range);
+    bool mutate(float mutation_rate, float mutation_range, float neuron_addition_rate, float layer_addition_rate);
 
     uint32_t get_input_size() { return this->input_layer.biases.get_cols(); }
     uint32_t get_output_size() { return this->output_layer.biases.get_cols(); }

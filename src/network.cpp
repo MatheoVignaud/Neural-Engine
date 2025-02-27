@@ -75,7 +75,7 @@ bool NeuralNetwork::validate(float moyenne, float ecart_type)
             this->input_layer.weights.set(j, i, distribution(gen));
         }
     }
-    for (int i = 0; i < this->input_layer.biases.get_rows(); i++)
+    for (int i = 0; i < this->input_layer.biases.get_cols(); i++)
     {
         this->input_layer.biases.set(i, 0, distribution(gen));
     }
@@ -96,7 +96,7 @@ bool NeuralNetwork::validate(float moyenne, float ecart_type)
                 this->hidden_layers[i].weights.set(k, j, distribution(gen));
             }
         }
-        for (int j = 0; j < this->hidden_layers[i].biases.get_rows(); j++)
+        for (int j = 0; j < this->hidden_layers[i].biases.get_cols(); j++)
         {
             this->hidden_layers[i].biases.set(j, 0, distribution(gen));
         }
