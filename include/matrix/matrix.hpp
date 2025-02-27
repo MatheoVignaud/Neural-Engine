@@ -23,8 +23,8 @@ public:
     Matrix operator~();
 
 private:
-    uint32_t rows;
-    uint32_t cols;
+    uint32_t rows = 0;
+    uint32_t cols = 0;
     std::vector<float> data;
 
     friend Matrix add(Matrix &a, Matrix &b);

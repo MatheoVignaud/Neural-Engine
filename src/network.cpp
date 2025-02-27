@@ -38,17 +38,26 @@ bool NeuralNetwork::validate()
         this->valid = true;
         return false;
     }
+    if (this->input_layer.weights.get_rows() == 0 || this->input_layer.weights.get_cols() == 0)
+    {
+        this->input_layer.weights = Matrix(this->hidden_layers[0].biases.get_rows(), this->input_layer.biases.get_cols(), 1);
+    }
     // create Matrix for weights
-    this->input_layer.weights = Matrix(this->hidden_layers[0].biases.get_rows(), this->input_layer.biases.get_cols(), 1);
     for (uint32_t i = 0; i < this->hidden_layers.size(); i++)
     {
         if (i == this->hidden_layers.size() - 1)
         {
-            this->hidden_layers[i].weights = Matrix(this->output_layer.biases.get_rows(), this->hidden_layers[i].biases.get_cols(), 1);
+            if (this->hidden_layers[i].weights.get_rows() == 0 || this->hidden_layers[i].weights.get_cols() == 0)
+            {
+                this->hidden_layers[i].weights = Matrix(this->output_layer.biases.get_rows(), this->hidden_layers[i].biases.get_cols(), 1);
+            }
         }
         else
         {
-            this->hidden_layers[i].weights = Matrix(this->hidden_layers[i + 1].biases.get_rows(), this->hidden_layers[i].biases.get_cols(), 1);
+            if (this->hidden_layers[i].weights.get_rows() == 0 || this->hidden_layers[i].weights.get_cols() == 0)
+            {
+                this->hidden_layers[i].weights = Matrix(this->hidden_layers[i + 1].biases.get_rows(), this->hidden_layers[i].biases.get_cols(), 1);
+            }
         }
     }
     this->valid = true;
