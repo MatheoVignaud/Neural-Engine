@@ -1,7 +1,7 @@
 add_rules("mode.debug", "mode.release")
 
 set_languages("c++17")
---set_optimize("fastest")
+set_optimize("fastest")
 
 add_defines("THREDED_MATRIX_OPS")
 

@@ -7,7 +7,8 @@ enum ActivationFunction
     LINEAR,
     RELU,
     SIGMOID,
-    TANH
+    TANH,
+    EXPONENTIAL
 };
 
 inline void relu(float &x)
@@ -23,4 +24,9 @@ inline void sigmoid(float &x)
 inline void tanh(float &x)
 {
     x = std::tanh(x);
+}
+
+inline void exponential(float &x)
+{
+    x = exp(x);
 }

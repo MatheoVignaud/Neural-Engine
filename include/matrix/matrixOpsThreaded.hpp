@@ -12,7 +12,7 @@ inline void addThread(Matrix &a, Matrix &b, Matrix &result, uint32_t start, uint
     {
         for (uint32_t j = 0; j < a.get_cols(); j++)
         {
-            result.set(i, j, a.get(j, i) + b.get(j, i));
+            result.set(j, i, a.get(j, i) + b.get(j, i));
         }
     }
 }
@@ -102,7 +102,7 @@ inline void multiplyThread(Matrix &a, Matrix &b, Matrix &result, uint32_t start,
 
 inline Matrix multiply(Matrix &a, Matrix &b)
 {
-    if (a.get_cols() == b.get_rows())
+    if (a.get_rows() == b.get_cols())
     {
         const uint32_t ops_per_thread = 10;
         std::vector<std::thread> threads;

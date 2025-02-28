@@ -7,10 +7,10 @@ NeuralNetwork::NeuralNetwork()
 NeuralNetwork::NeuralNetwork(uint32_t input_size, uint32_t output_size, ActivationFunction output_activation)
 {
     this->input_layer.type = LayerType::INPUT;
-    this->input_layer.biases = Matrix(input_size, 1); // just to know the size of the input
+    this->input_layer.biases = Matrix(1, input_size); // just to know the size of the input
 
     this->output_layer.type = LayerType::OUTPUT;
-    this->output_layer.biases = Matrix(output_size, 1);
+    this->output_layer.biases = Matrix(1, output_size);
     this->output_layer.activation = output_activation;
 }
 
@@ -24,7 +24,7 @@ void NeuralNetwork::add_hidden_layer(uint32_t size, ActivationFunction activatio
     {
         Layer hidden_layer;
         hidden_layer.type = LayerType::HIDDEN;
-        hidden_layer.biases = Matrix(size, 1);
+        hidden_layer.biases = Matrix(1, size);
         hidden_layer.activation = activation;
         this->hidden_layers.push_back(hidden_layer);
     }
@@ -144,36 +144,36 @@ bool NeuralNetwork::mutate(float mutation_rate, float mutation_range, float neur
         int layer_index = rand() % (this->hidden_layers.size());
         // add a neuron to the layer
         std::vector<float> new_biases;
-        for (int i = 0; i < this->hidden_layers[layer_index].biases.get_rows(); i++)
+        for (int i = 0; i < this->hidden_layers[layer_index].biases.get_cols(); i++)
         {
             new_biases.push_back(distribution(gen));
         }
         std::vector<float> new_weights;
-        for (int i = 0; i < this->hidden_layers[layer_index].weights.get_rows(); i++)
+        for (int i = 0; i < this->hidden_layers[layer_index].weights.get_cols(); i++)
         {
             new_weights.push_back(distribution(gen));
         }
-        this->hidden_layers[layer_index].biases.add_col(new_biases);
-        this->hidden_layers[layer_index].weights.add_col(new_weights);
+        this->hidden_layers[layer_index].biases.add_row(new_biases);
+        this->hidden_layers[layer_index].weights.add_row(new_weights);
 
         // modifiy the weights of the next layer
         if (layer_index < this->hidden_layers.size() - 1)
         {
             std::vector<float> new_weights;
-            for (int i = 0; i < this->hidden_layers[layer_index + 1].weights.get_cols(); i++)
+            for (int i = 0; i < this->hidden_layers[layer_index + 1].weights.get_rows(); i++)
             {
                 new_weights.push_back(distribution(gen));
             }
-            this->hidden_layers[layer_index + 1].weights.add_row(new_weights);
+            this->hidden_layers[layer_index + 1].weights.add_col(new_weights);
         }
         else
         {
             std::vector<float> new_weights;
-            for (int i = 0; i < this->output_layer.weights.get_cols(); i++)
+            for (int i = 0; i < this->output_layer.weights.get_rows(); i++)
             {
                 new_weights.push_back(distribution(gen));
             }
-            this->output_layer.weights.add_row(new_weights);
+            this->output_layer.weights.add_col(new_weights);
         }
     }
 
@@ -272,7 +272,7 @@ std::vector<float> NeuralNetwork::forward(std::vector<float> input)
         return {};
     }
 
-    Matrix output(this->input_layer.biases.get_rows(), 1);
+    Matrix output(1, input.size());
     output.set_data(input);
 
     // hidden layers
@@ -290,13 +290,16 @@ std::vector<float> NeuralNetwork::forward(std::vector<float> input)
         case ActivationFunction::TANH:
             output.function_on_elements(tanh);
             break;
+        case ActivationFunction::EXPONENTIAL:
+            output.function_on_elements(exponential);
+            break;
         default:
             break;
         }
     }
 
     // output layer
-    output = this->output_layer.weights * output + this->output_layer.biases;
+    output = output * this->output_layer.weights + this->output_layer.biases;
     switch (this->output_layer.activation)
     {
     case ActivationFunction::RELU:
@@ -307,6 +310,9 @@ std::vector<float> NeuralNetwork::forward(std::vector<float> input)
         break;
     case ActivationFunction::TANH:
         output.function_on_elements(tanh);
+        break;
+    case ActivationFunction::EXPONENTIAL:
+        output.function_on_elements(exponential);
         break;
     }
 
