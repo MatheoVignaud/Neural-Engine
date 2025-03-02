@@ -27,6 +27,7 @@ public:
     uint32_t get_number_of_trainable_parameters();
 
     std::vector<float> forward(std::vector<float> input);
+    std::vector<std::vector<float>> forward_batch(std::vector<std::vector<float>> inputs);
 
     NeuralNetwork clone();
 

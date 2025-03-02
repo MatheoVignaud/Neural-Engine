@@ -6,6 +6,7 @@ enum ActivationFunction
 {
     LINEAR,
     RELU,
+    LEAKY_RELU,
     SIGMOID,
     TANH,
     EXPONENTIAL
@@ -13,7 +14,12 @@ enum ActivationFunction
 
 inline void relu(float &x)
 {
-    x = x > 0 ? x : 0;
+    x = std::max(0.0f, x);
+}
+
+inline void leaky_relu(float &x)
+{
+    x = std::max(0.01f * x, x);
 }
 
 inline void sigmoid(float &x)

@@ -5,9 +5,9 @@
 
 enum LayerType
 {
-    INPUT,
-    HIDDEN,
-    OUTPUT,
+    INPUT_LAYER,
+    HIDDEN_LAYER,
+    OUTPUT_LAYER,
 };
 
 struct Layer

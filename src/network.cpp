@@ -6,10 +6,10 @@ NeuralNetwork::NeuralNetwork()
 
 NeuralNetwork::NeuralNetwork(uint32_t input_size, uint32_t output_size, ActivationFunction output_activation)
 {
-    this->input_layer.type = LayerType::INPUT;
+    this->input_layer.type = LayerType::INPUT_LAYER;
     this->input_layer.biases = Matrix(1, input_size); // just to know the size of the input
 
-    this->output_layer.type = LayerType::OUTPUT;
+    this->output_layer.type = LayerType::OUTPUT_LAYER;
     this->output_layer.biases = Matrix(1, output_size);
     this->output_layer.activation = output_activation;
 }
@@ -23,7 +23,7 @@ void NeuralNetwork::add_hidden_layer(uint32_t size, ActivationFunction activatio
     if (size > 0)
     {
         Layer hidden_layer;
-        hidden_layer.type = LayerType::HIDDEN;
+        hidden_layer.type = LayerType::HIDDEN_LAYER;
         hidden_layer.biases = Matrix(1, size);
         hidden_layer.activation = activation;
         this->hidden_layers.push_back(hidden_layer);
@@ -284,6 +284,9 @@ std::vector<float> NeuralNetwork::forward(std::vector<float> input)
         case ActivationFunction::RELU:
             output.function_on_elements(relu);
             break;
+        case ActivationFunction::LEAKY_RELU:
+            output.function_on_elements(leaky_relu);
+            break;
         case ActivationFunction::SIGMOID:
             output.function_on_elements(sigmoid);
             break;
@@ -305,6 +308,9 @@ std::vector<float> NeuralNetwork::forward(std::vector<float> input)
     case ActivationFunction::RELU:
         output.function_on_elements(relu);
         break;
+    case ActivationFunction::LEAKY_RELU:
+        output.function_on_elements(leaky_relu);
+        break;
     case ActivationFunction::SIGMOID:
         output.function_on_elements(sigmoid);
         break;
@@ -324,6 +330,92 @@ std::vector<float> NeuralNetwork::forward(std::vector<float> input)
     return result;
 }
 
+std::vector<std::vector<float>> NeuralNetwork::forward_batch(std::vector<std::vector<float>> inputs)
+{
+    if (!this->valid)
+    {
+        std::cout << "Validate the network first" << std::endl;
+        return {};
+    }
+    for (int i = 0; i < inputs.size(); i++)
+    {
+        if (inputs[i].size() != this->input_layer.biases.get_rows())
+        {
+            std::cout << "Input size does not match the input layer size" << std::endl;
+            return {};
+        }
+    }
+
+    Matrix output(inputs.size(), inputs[0].size());
+    std::vector<float> input;
+    for (int i = 0; i < inputs.size(); i++)
+    {
+        input.insert(input.end(), inputs[i].begin(), inputs[i].end());
+    }
+
+    output.set_data(input);
+
+    // hidden layers
+    for (uint32_t i = 0; i < this->hidden_layers.size(); i++)
+    {
+        output = output * this->hidden_layers[i].weights;
+        output.special_biases_addition_for_batched(this->hidden_layers[i].biases);
+        switch (this->hidden_layers[i].activation)
+        {
+        case ActivationFunction::RELU:
+            output.function_on_elements(relu);
+            break;
+        case ActivationFunction::LEAKY_RELU:
+            output.function_on_elements(leaky_relu);
+            break;
+        case ActivationFunction::SIGMOID:
+            output.function_on_elements(sigmoid);
+            break;
+        case ActivationFunction::TANH:
+            output.function_on_elements(tanh);
+            break;
+        case ActivationFunction::EXPONENTIAL:
+            output.function_on_elements(exponential);
+            break;
+        default:
+            break;
+        }
+    }
+
+    // output layer
+    output = output * this->output_layer.weights;
+    output.special_biases_addition_for_batched(this->output_layer.biases);
+    switch (this->output_layer.activation)
+    {
+    case ActivationFunction::RELU:
+        output.function_on_elements(relu);
+        break;
+    case ActivationFunction::LEAKY_RELU:
+        output.function_on_elements(leaky_relu);
+        break;
+    case ActivationFunction::SIGMOID:
+        output.function_on_elements(sigmoid);
+        break;
+    case ActivationFunction::TANH:
+        output.function_on_elements(tanh);
+        break;
+    case ActivationFunction::EXPONENTIAL:
+        output.function_on_elements(exponential);
+        break;
+    }
+
+    std::vector<std::vector<float>> result;
+    for (uint32_t i = 0; i < output.get_cols(); i++)
+    {
+        std::vector<float> row;
+        for (uint32_t j = 0; j < output.get_rows(); j++)
+        {
+            row.push_back(output.get(i, j));
+        }
+        result.push_back(row);
+    }
+    return result;
+}
 NeuralNetwork NeuralNetwork::clone()
 {
     NeuralNetwork nn;

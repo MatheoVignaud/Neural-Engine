@@ -118,3 +118,18 @@ Matrix Matrix::operator~()
 {
     return transpose(*this);
 }
+
+void Matrix::special_biases_addition_for_batched(Matrix &b)
+{
+    if (this->rows != b.get_rows())
+    {
+        throw std::invalid_argument("Matrix dimensions do not match");
+    }
+    for (uint32_t i = 0; i < this->cols; i++)
+    {
+        for (uint32_t j = 0; j < this->rows; j++)
+        {
+            this->data[j * this->cols + i] += b.data[j];
+        }
+    }
+}

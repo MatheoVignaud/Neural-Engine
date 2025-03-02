@@ -24,6 +24,8 @@ public:
     Matrix operator*(Matrix &b);
     Matrix operator~();
 
+    void special_biases_addition_for_batched(Matrix &b);
+
 private:
     uint32_t rows = 0;
     uint32_t cols = 0;
