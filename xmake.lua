@@ -3,7 +3,7 @@ add_rules("mode.debug", "mode.release")
 set_languages("c++17")
 set_optimize("fastest")
 
-add_defines("THREDED_MATRIX_OPS")
+--add_defines("THREDED_MATRIX_OPS")
 
 add_requires("libsdl2")
 

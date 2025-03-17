@@ -39,7 +39,7 @@ inline Matrix subtract(Matrix &a, Matrix &b)
 
 inline Matrix multiply(Matrix &a, Matrix &b)
 {
-    if (a.get_cols() == b.get_rows())
+    if (a.get_rows() == b.get_cols())
     {
         Matrix result(a.get_cols(), b.get_rows());
         for (uint32_t i = 0; i < b.get_rows(); i++)

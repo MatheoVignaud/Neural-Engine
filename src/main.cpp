@@ -5,10 +5,10 @@
 #include <nn/network.hpp>
 #include <thread>
 
-const uint16_t population_size = 50;
-const uint16_t survivors = 5;
-const uint16_t iterations = 1600;
-const uint16_t draw_interval = 1;
+const uint16_t population_size = 160;
+const uint16_t survivors = 10;
+const uint16_t iterations = 900;
+const uint16_t draw_interval = 5;
 const uint16_t forward_per_thread = 10;
 
 void thread_forward(std::vector<NeuralNetwork> *nn, std::vector<std::vector<float>> &inputs, std::vector<float> &results, std::vector<double> &fitness, int start, int end)
@@ -23,6 +23,9 @@ void thread_forward(std::vector<NeuralNetwork> *nn, std::vector<std::vector<floa
         }
     }
 }
+
+std::vector<float> mutation_range = {0.1, 0.01, 0.001, 0.0001, 0.00001, 0.000001};
+std::vector<float> mutation_rate = {0.5, 0.1, 0.01, 0.001};
 
 int main(int argc, char *argv[])
 {
@@ -55,12 +58,14 @@ int main(int argc, char *argv[])
     for (uint16_t i = 0; i < population_size; i++)
     {
         NeuralNetwork nn(1, 1, ActivationFunction::LINEAR);
-        nn.add_hidden_layer(1, ActivationFunction::LEAKY_RELU);
-        nn.add_hidden_layer(1, ActivationFunction::LEAKY_RELU);
-        nn.add_hidden_layer(1, ActivationFunction::LEAKY_RELU);
-        nn.add_hidden_layer(1, ActivationFunction::TANH);
+        nn.add_hidden_layer(1, ActivationFunction::SIGMOID);
+        nn.add_hidden_layer(1, ActivationFunction::SIGMOID);
+        nn.add_hidden_layer(1, ActivationFunction::SIGMOID);
+        nn.add_hidden_layer(1, ActivationFunction::LINEAR);
         nn.add_hidden_layer(1, ActivationFunction::EXPONENTIAL);
-        nn.add_hidden_layer(1, ActivationFunction::LEAKY_RELU);
+        nn.add_hidden_layer(1, ActivationFunction::SIGMOID);
+        nn.add_hidden_layer(1, ActivationFunction::SIGMOID);
+        nn.add_hidden_layer(1, ActivationFunction::LINEAR);
 
         nn.validate();
         nn.mutate(0.1, 0.1, 0.5, 0.00);
@@ -92,9 +97,9 @@ int main(int argc, char *argv[])
         for (int i = 0; i < iterations; i++)
         {
             // float x = rand() % 800;
-            float x = i / 2.0;
+            float x = i;
             inputs.push_back({x});
-            result.push_back(0.001 * pow(x, 2) + 0.1 * x + 2);
+            result.push_back(0.001 * pow(x, 2) + 0.1 * x);
         }
 
         std::vector<std::thread> threads;
@@ -144,7 +149,7 @@ int main(int argc, char *argv[])
             for (int i = 0; i < 800; i++)
             {
                 float x = i;
-                float y = 0.001 * pow(x, 2) + 0.1 * x + 2;
+                float y = 0.001 * pow(x, 2) + 0.1 * x;
                 SDL_RenderDrawPoint(renderer, i, 500 - y * 0.5);
             }
 
@@ -175,7 +180,7 @@ int main(int argc, char *argv[])
         for (int i = 0; i < population_size - survivors; i++)
         {
             NeuralNetwork nn = population[rand() % survivors];
-            nn.mutate(0.03, 0.006, 0.1, 0.01);
+            nn.mutate(mutation_rate[rand() % mutation_rate.size()], mutation_range[rand() % mutation_range.size()], 0.05, 0.01);
             new_population.push_back(nn);
         }
         population = new_population;
